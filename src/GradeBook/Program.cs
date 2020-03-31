@@ -10,7 +10,12 @@ namespace GradeBook
             Book book = new Book("Scott's Grade Book");
             book.AddGrade(89.3);
             book.AddGrade(90.5);
-            book.ShowStatistics();
+            
+            
+            Statistics stats = book.GetStatistics();
+            Console.WriteLine($"The low grade is {stats.Low:N1}");
+            Console.WriteLine($"The high grade is {stats.High:N1}");
+            Console.WriteLine($"The average grade is {stats.Average:N1}");
 
             //var grades = new List<double>() { 12.7, 10.3, 6.11, 4.1 };
 
