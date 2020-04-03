@@ -5,11 +5,12 @@ namespace GradeBook.Test
 {
     public class BookTests
     {
+
         [Fact]
         public void BookCalculatesAnAverageGrade()
         {
             // arrange
-            Book book = new Book("");
+            InMemoryBook book = new InMemoryBook("");
             book.AddGrade(89.1);
             book.AddGrade(90.5);
             book.AddGrade(77.3);
@@ -24,15 +25,6 @@ namespace GradeBook.Test
             Assert.Equal(90.5, result.High, 1);
             Assert.Equal(77.3, result.Low, 1);
             Assert.Equal('B', result.Letter);
-        }
-
-        [Fact]
-        public void CheckAddGradeToBook()
-        {
-            Book book = new Book("");
-            string results = book.AddGrade(105);
-
-            Assert.Equal("Invalid value", results);
         }
     }
 }

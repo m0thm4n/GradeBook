@@ -1,18 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace GradeBook
 {
-    public class Book
+    public delegate void GradeAddedDelegate(object sender, EventArgs args);
+
+    public class NamedObject
     {
-        public Book(string name) 
+        public NamedObject(string name)
+        {
+            Name = name;
+        }
+
+        public string Name
+        {
+            get;
+            set;
+        }
+    }
+
+    public interface IBook 
+    {
+        void AddGrade(double grade);
+        Statistics GetStatistics();
+        string Name { get; }
+        event GradeAddedDelegate GradeAdded;
+    }
+
+    public abstract class Book : NamedObject, IBook
+    {
+        public Book(string name) : base(name)
+        {
+
+        }
+
+        public abstract event GradeAddedDelegate GradeAdded;
+
+        public abstract void AddGrade(double grade);
+
+        public abstract Statistics GetStatistics();
+    }
+
+    public class DiskBook : Book
+    {
+        public DiskBook(string name) : base(name)
+        {
+
+            Name = name;
+        }
+
+        public string Name { get; set; }
+
+        public override event GradeAddedDelegate GradeAdded;
+
+        public override void AddGrade(double grade)
+        {
+            using (StreamWriter stream = File.AppendText($"{Name}.txt"))
+            {  
+                stream.WriteLine(grade);
+                if (GradeAdded != null) 
+                {
+                    GradeAdded(this, new EventArgs());
+                }
+            }
+        }
+
+
+        public override Statistics GetStatistics()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class InMemoryBook : Book
+    {
+        public InMemoryBook(string name) : base(name)
         {
             grades = new List<double>();
             Name = name;
         }
 
-        public void AddLetterGrade(char letter)
+        public void AddGrade(char letter)
         {
             switch (letter) 
             {
@@ -37,17 +107,19 @@ namespace GradeBook
             }
         }
 
-        public string AddGrade(double grade)
+        public override void AddGrade(double grade)
         {
             if (grade <= 100 && grade >= 0)
             {
                 grades.Add(grade);
-                System.Console.WriteLine("Sucess!");
-                return "Sucess!";
+                if (GradeAdded != null) 
+                {
+                    GradeAdded(this, new EventArgs());
+                }
             }
             else 
             {
-                throw new ArgumentException($"Invalid {nameof(grade)}");
+                System.Console.WriteLine("Invalid Grade");
             }
         }
 
@@ -55,7 +127,9 @@ namespace GradeBook
         // {
         // }
 
-        public Statistics GetStatistics()
+        public override event GradeAddedDelegate GradeAdded;
+
+        public override Statistics GetStatistics()
         {
             Statistics result = new Statistics();
             result.Average = 0.0;
@@ -93,6 +167,7 @@ namespace GradeBook
         }
 
         private List<double> grades;
-        public string Name;
+
+        //private string name;
     }
 }

@@ -7,55 +7,46 @@ namespace GradeBook
     {
         static void Main(string[] args)
         {
-            Book book = new Book("Scott's Grade Book");
-            bool doneEnteringGrades = false;
+            DiskBook book = new DiskBook("Nathan's Grade Book");
+            book.GradeAdded += OnGradeAdded;
 
-            while(!doneEnteringGrades) 
-            {
-                System.Console.WriteLine("Please enter a grade: ");
-                string input = Console.ReadLine();
-                if (input == "q")
-                {
-                    doneEnteringGrades = true;
-                }
-                else 
-                {
-                    try 
-                    {
-                        double inputConvertedToDouble = double.Parse(input);
-                        book.AddGrade(inputConvertedToDouble);
-                    }
-                    catch 
-                    {
-                        System.Console.WriteLine("That is not a grade or a 'q'!");
-                    }
-                }
-            }
-            
-            
+            EnterGrades(book);
+
             Statistics stats = book.GetStatistics();
+            Console.WriteLine($"For the book named {book.Name}");
             Console.WriteLine($"The low grade is {stats.Low:N1}");
             Console.WriteLine($"The high grade is {stats.High:N1}");
             Console.WriteLine($"The average grade is {stats.Average:N1}");
             Console.WriteLine($"The letter grade is {stats.Letter}");
+        }
 
-            //var grades = new List<double>() { 12.7, 10.3, 6.11, 4.1 };
+        private static void EnterGrades(IBook book)
+        {
+            while (true)
+            {
+                System.Console.WriteLine("Please enter a grade: ");
+                string input = Console.ReadLine();
 
-            //var result = 0.0;
-            //var highGrade = double.MinValue;
-            //var lowGrade = double.MaxValue;
+                if (input == "q")
+                {
+                    break;
+                }
 
-            //foreach(var number in grades)
-            //{
-            //    lowGrade = Math.Min(number, lowGrade);
-            //    highGrade = Math.Max(number, highGrade);
-            //    result += number;
-            //}
-            //result /= grades.Count;
+                try
+                {
+                    double inputConvertedToDouble = double.Parse(input);
+                    book.AddGrade(inputConvertedToDouble);
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e);
+                }
+            }
+        }
 
-            //Console.WriteLine($"The low grade is {lowGrade:N1}");
-            //Console.WriteLine($"The high grade is {highGrade:N1}");
-            //Console.WriteLine($"The average grade is {result:N1}");
+        static void OnGradeAdded(object sender, EventArgs args)
+        {
+            Console.WriteLine("A grade was added!");
         }
     }
 }

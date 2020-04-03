@@ -3,8 +3,30 @@ using Xunit;
 
 namespace GradeBook.Test
 {
+    public delegate string WriteLogDelegate(string logMessage);
+
     public class TypeTests
     {
+        int count = 0;
+
+        [Fact]
+        public void WriteLogDelegateCanPointToMethod()
+        {
+            WriteLogDelegate logDelegate = ReturnMessage;
+
+            logDelegate += ReturnMessage;
+
+            var result = logDelegate("Hello!");
+
+            Assert.Equal("Hello!", result);
+        }
+
+        string ReturnMessage(string message)
+        {
+            count++;
+            return message;
+        }
+
         [Fact]
         public void Test1()
         {
@@ -33,9 +55,9 @@ namespace GradeBook.Test
             Assert.Equal("Book 1", book1.Name);
         }
 
-        private void GetBookSetName(Book book, string name)
+        private void GetBookSetName(InMemoryBook book, string name)
         {
-            book = new Book(name);
+            book = new InMemoryBook(name);
         }
 
         [Fact]
@@ -47,7 +69,7 @@ namespace GradeBook.Test
             Assert.Equal("New Name", book1.Name);
         }
 
-        private void SetName(Book book, string name)
+        private void SetName(InMemoryBook book, string name)
         {
             book.Name = name;
         }
@@ -56,8 +78,8 @@ namespace GradeBook.Test
         public void GetBookReturnsDifferentObjects()
         {
             // arrange
-            Book book1 = GetBook("Book 1");
-            Book book2 = GetBook("Book 2");
+            InMemoryBook book1 = GetBook("Book 1");
+            InMemoryBook book2 = GetBook("Book 2");
 
             
             
@@ -75,8 +97,8 @@ namespace GradeBook.Test
         public void TwoVarsCanReferenceSameObject()
         {
             // arrange
-            Book book1 = GetBook("Book 1");
-            Book book2 = book1;
+            InMemoryBook book1 = GetBook("Book 1");
+            InMemoryBook book2 = book1;
 
             
             
@@ -88,9 +110,9 @@ namespace GradeBook.Test
             Assert.Same(book1, book2);
         }
 
-        Book GetBook(string name) 
+        InMemoryBook GetBook(string name) 
         {
-            return new Book(name);
+            return new InMemoryBook(name);
         }
     }
 }
