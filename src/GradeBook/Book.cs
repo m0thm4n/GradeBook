@@ -51,8 +51,6 @@ namespace GradeBook
             Name = name;
         }
 
-        public string Name { get; set; }
-
         public override event GradeAddedDelegate GradeAdded;
 
         public override void AddGrade(double grade)
